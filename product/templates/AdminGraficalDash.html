@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'product/css/adminDashboardsStyles.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <title>Dashboard de negocios</title>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1 class="sidebar-title">Administrador</h1>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'product/icons/home.png' %}" alt="">&nbsp;<span>Inicio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'planogram' %}">
+                            <img src="{% static 'product/icons/location.png' %}" alt="">&nbsp;<span>Mapa de sucursales</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'maps' %}">
+                            <img src="{% static 'product/icons/map.png' %}"
+                                alt="">&nbsp;<span>Mapa Alcaldia</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h2 class="header-title">SEGUIMIENTO CAPISTRANO</h2>
+                <div class="user-actions">
+                    <img src="{% static 'product/icons/notifications.png' %}" alt="" class="icon">
+                    <img src="{% static 'product/icons/user.png' %}" alt="" class="avatar">
+                </div>
+            </header>
+            <div class="dashboard-grid">
+                <div class="map-container">
+                    <h2 class="text-xl font-semibold mb-2">Mapa</h2>
+                    <div id="map"></div>
+                </div>
+
+                <div class="selected-branch">
+                    <p>&nbsp;</p>
+                    <h2>Sucursal seleccionada: "{{sucursal}}"</h2>
+                    <p>&nbsp;</p>
+                    <p>PERIODO: "{{date}}"</p>
+                    <p>&nbsp;</p>
+                    <p>TIPO DE REPORTE: DIARIO</p>
+                    <p>&nbsp;</p>
+
+
+                </div>
+            </div>
+
+            <div class="cards">
+                <div class="chart-container">
+                    <h2>Gráfico de Distribución de Productos</h2>
+                    <img src="data:image/png;base64,{{ chart_image }}" alt="Gráfico de Distribución" id="chartCanvas">
+                </div>
+                <div class="chart-container">
+                    <h2>Productos detectados</h2>
+                    <img src="data:image/png;base64,{{ img_str }}" alt="img_boxes" id="chartCanvas" style="width: 100%;">
+            </div>
+
+        </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker(["{{latitud}}", "{{longitud}}"]).addTo(map)
+            .bindPopup("{{ direccion }}")
+            .openPopup();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'product/css/adminDashboardsStyles.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <title>Mapa de Sucursales</title>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1 class="sidebar-title">Administrador</h1>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'product/icons/home.png' %}" alt="">&nbsp;<span>Inicio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'planogram' %}">
+                            <img src="{% static 'product/icons/location.png' %}" alt="">&nbsp;<span>Mapa Sucursales</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'maps' %}">
+                            <img src="{% static 'product/icons/map.png' %}" alt="">&nbsp;<span>Mapa Alcaldias</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h2 class="header-title">SEGUIMIENTO CAPISTRANO</h2>
+                <div class="user-actions">
+                    <img src="{% static 'product/icons/notifications.png' %}" alt="" class="icon">
+                    <img src="{% static 'product/icons/user.png' %}" alt="" class="avatar">
+                </div>
+            </header>
+            <div id="map" style="height: 100vh;"></div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Inicializa el mapa
+        var map = L.map('map').setView([19.432608, -99.133209], 13);  // Ciudad de México
+
+        // Añade una capa de teselas del mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Función para añadir un marcador al mapa
+        function addMarker(latitud, longitud, img_str_pie_alcaldia, alcaldia) {
+            var popupContent = `<div>
+                                    <p>${alcaldia}</p>
+                                    <img src="data:image/png;base64,${img_str_pie_alcaldia}" alt="Gráfico" style="width: 250px; height: 200px;" />
+                                </div>`;
+            L.marker([latitud, longitud]).addTo(map)
+                .bindPopup(popupContent)
+                .openPopup();
+        }
+
+        fetch('{% url "get_markers_alcaldia" %}')
+    .then(response => response.json())
+    .then(markers => {
+        markers.forEach(function (marker) {
+            // Aquí pasamos los cuatro argumentos necesarios
+            addMarker(marker.latitud, marker.longitud, marker.img_str_pie_alcaldia, marker.alcaldia);
+        });
+    })
+    .catch(error => console.error('Error al cargar los datos:', error));
+
+    </script>
+</body>
+
+</html>

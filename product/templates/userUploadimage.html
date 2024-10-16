@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Imagen</title>
+    <link rel="stylesheet" href="{% static 'product/css/index.css' %}">
+</head>
+
+<body>
+
+    <div class="container">
+        
+        <h1>Detección de Productos Capistrano</h1>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_image' %}">
+            {% csrf_token %}
+
+            <!-- Input para nombre de sucursal -->
+            <div class="form-group">
+                <label for="sucursal">Nombre de Sucursal</label>
+                <input type="text" id="sucursal" name="sucursal" required
+                    oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()">
+            </div>
+
+            <!-- Input para nombre de cadena -->
+            <div class="form-group">
+                <label for="cadena">Nombre de Cadena</label>
+                <select id="cadena" name="cadena" required>
+                    <option value="" disabled selected>Seleccione una cadena</option>
+                    {% for cadena in cadenas %}
+                    <option value="{{ cadena.id_chain }}" 
+                    {% if cadena.ID_CHAIN == selected_cadenas %}selected{% endif %}>
+                        {{ cadena.name_chain }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Input para selección de alcaldía -->
+            <div class="form-group">
+                <label for="alcaldia">Seleccionar Alcaldía</label>
+                <select id="alcaldia" name="alcaldia" required>
+                    {% for alcaldia in alcaldias %}
+                    <option value="{{ alcaldia.id_alcaldia }}" 
+                    {% if alcaldia.id_alcaldia == selected_alcaldias %}selected{% endif %}>
+                        {{ alcaldia.nombre_alcaldia }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Input para latitud -->
+            <div class="form-group">
+                <label for="latitude">Latitud</label>
+                <input type="text" id="latitude" name="latitude" readonly required>
+            </div>
+
+            <!-- Input para longitud -->
+            <div class="form-group">
+                <label for="longitude">Longitud</label>
+                <input type="text" id="longitude" name="longitude" readonly required>
+            </div>
+
+            <!-- Input para dirección -->
+            <div class="form-group">
+                <label for="address">Dirección</label>
+                <input type="text" id="address" name="address" readonly required>
+            </div>
+
+            <!-- Input para seleccionar imagen -->
+            <div class="form-group">
+                <label for="image">Seleccionar Imagen</label>
+                <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg" required>
+            </div>
+
+            <!-- Botón de envío -->
+            <button type="submit">Enviar Datos</button>
+        </form>
+    </div>
+
+    <script src="{% static 'product/js/location.js' %}"></script>
+
+</body>
+
+</html>
